@@ -1,0 +1,174 @@
+syntax = "proto3";
+
+package game.baccarat.msg;
+
+import "room.proto";
+
+option java_package = "game.baccarat.msg";
+option java_outer_classname = "BaccaratMsg";
+
+// 房间状态
+enum RoomState {
+    NONE = 0;   // 初始状态
+    BANKER = 1; // 上庄
+    BET = 2; // 下注
+    DEAL = 3; // 发牌
+    OUTS = 4; // 补牌
+    REWARD = 5; // 结算
+}
+
+// 下注信息
+message BetInfo {
+    int32 index = 1; // 下注位置(1闲对2和3庄对4闲5庄)
+    int32 num = 2; // 下注数量
+    int32 award = 3; // 输赢
+}
+
+// 玩家信息
+message PlayerInfo {
+    int64 uid = 1; // 玩家id
+    repeated BetInfo betInfos = 2; // 投注信息
+    int32 reward = 3; // 输赢
+    repeated int32 betOptions = 4; // 下注选项
+}
+
+// 开奖信息
+message Lottery {
+    // 1闲对2和3庄对4闲5庄
+    repeated int32 result = 1;
+}
+
+// 房间进入消息
+message ResJoinRoomInfoMsg {
+    // 基础房间信息
+    game.room.msg.JoinRoomInfo roomInfo = 1;
+    // 玩家信息
+    repeated PlayerInfo playerInfos = 2;
+    // 房间状态
+    RoomState currentState = 3;
+    // 状态截止时间
+    int64 stateEndTime = 4;
+    // 当前局下注信息
+    repeated BetInfo betInfos = 5;
+    // 庄家的牌
+    repeated int32 bankerCard = 6;
+    // 闲家的牌
+    repeated int32 playerCard = 7;
+    // 开奖
+    Lottery lottery = 8;
+    // 路子记录
+    repeated Lottery records = 9;
+    // 游戏人数
+    int32 playerNum = 10;
+}
+
+// 更新房间状态消息
+message ResUpdateRoomStateMsg {
+    // 房间状态
+    RoomState currentState = 1;
+    // 状态截止时间
+    int64 stateEndTime = 2;
+}
+
+// 请求下注
+message ReqBetMsg {
+    BetInfo betInfo = 1; // 下注
+}
+
+// 玩家下注
+message ResBetMsg {
+    // 下注玩家id
+    int64 uid = 1;
+    BetInfo betInfo = 2; // 下注
+}
+
+// 续投
+message ReqContinueBetMsg {
+}
+
+message ResContinueBetMsg {
+    int64 uid = 1;
+    repeated BetInfo betInfos = 2;
+}
+
+// 修改下注选项请求
+message ReqChangeBetOptionMsg {
+    repeated int32 betOptions = 1;
+}
+// 修改下注选项相应
+message ResChangeBetOptionMsg {
+    repeated int32 betOptions = 1;
+}
+
+// 房间列表请求
+message ReqRoomListMsg {
+}
+// 房间列表返回
+message ResRoomListMsg {
+    // 房间基本信息
+    message RoomInfo {
+        int32 roomId = 1; // 房间号
+        RoomState state = 2; // 当前状态
+        int64 leftTime = 3; // 剩余时间
+        repeated Lottery records = 4; // 路子
+        int32 playerNum = 5; // 游戏人数
+        string name = 6; // 房间名字
+    }
+    repeated RoomInfo rooms = 1;
+}
+
+// 刷新游戏人数
+message ResUpdatePlayerNumMsg {
+    int32 playerNum = 1;
+}
+
+// 发牌
+message ResDealCardsMsg {
+    // 庄家的牌
+    repeated int32 bankerCard = 1;
+    // 闲家的牌
+    repeated int32 playerCard = 2;
+}
+
+// 补牌
+message ResOutsMsg {
+    // 庄家的牌
+    int32 bankerCard = 1;
+    // 闲家的牌
+    int32 playerCard = 2;
+}
+
+// 小局结算信息
+message ResRoundResultMsg {
+    message PlayerResultInfo {
+        int64 uid = 1;
+        repeated BetInfo betInfos = 2;
+        int32 award = 3;
+    }
+    repeated PlayerResultInfo resultInfos = 1;
+}
+
+// 游戏记录
+message ReqGameRecordMsg {
+}
+message ResGameRecordMsg {
+    // 投注结算
+    message BetResult {
+        // 1闲对2和3庄对4闲5庄
+        int32 index = 1;
+        // 投注金额 
+        int32 betNum = 2;
+    }
+    // 记录
+    message Record {
+        int64 time = 1; // 时间
+        int64 beforeMoney = 2; // 投注前金额
+        repeated BetResult betInfos = 3; // 投注信息
+        repeated int32 bankerCard = 4; // 庄家的牌
+        repeated int32 playerCard = 5; // 闲家的牌
+        Lottery lottery = 6; // 开奖
+        int32 award = 7; // 结算
+        int64 afterMoney = 8; // 结算后金额
+    }
+    repeated Record records = 1;
+}
