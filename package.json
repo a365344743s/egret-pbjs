@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "protobufjs": "^6.8.8",
-    "uglify-js": "^3.4.9"
+    "uglify-js": "^3.7.4"
   },
   "devDependencies": {},
   "scripts": {

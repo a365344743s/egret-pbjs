@@ -2,7 +2,7 @@
 白鹭使用的proto转js
 
 # install
-    npm install --registry=https://registry.npm.taobao.org
+    npm install
 
 # useage
     node ./index.js
