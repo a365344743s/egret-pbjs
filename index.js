@@ -37,6 +37,8 @@ function generate() {
             if (err)
                 throw err;
             output = output.replace('import * as $protobuf from "protobufjs";', 'import * as $protobuf from "../protobuf/protobuf";\nexport as namespace pbjs;\n');
+            output = output.replace('number|Long', 'Long');
+            output = output.replace('(Long)', 'Long');
             fs.writeFileSync(outTsPath, output);
             fs.unlinkSync(outTempPath);
         });
