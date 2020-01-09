@@ -11,7 +11,7 @@ function generate() {
     if (protoList.length == 0) {
         throw inputRoot + ' 文件夹中不存在 .proto 文件';
     }
-    const args = ["--no-convert", '-t', 'static', '-r', 'pbjs'];
+    const args = ['-t', 'static', '-r', 'pbjs'];
     for (let i = 0, len = protoList.length;i < len;i++){
         args.push("./in/" + protoList[i]);
     }
