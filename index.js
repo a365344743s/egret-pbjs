@@ -11,7 +11,7 @@ function generate() {
     if (protoList.length == 0) {
         throw inputRoot + ' 文件夹中不存在 .proto 文件';
     }
-    const args = ['-t', 'static', '-r', 'pbjs'];
+    const args = ['-t', 'static', '-r', 'pbjs', '--no-create', '--no-verify', '--no-convert', '--no-delimited', '--force-long'];
     for (let i = 0, len = protoList.length;i < len;i++){
         args.push("./in/" + protoList[i]);
     }
@@ -37,8 +37,6 @@ function generate() {
             if (err)
                 throw err;
             output = output.replace('import * as $protobuf from "protobufjs";', 'import * as $protobuf from "../protobuf/protobuf";\nexport as namespace pbjs;\n');
-            output = output.replace('number|Long', 'Long');
-            output = output.replace('(Long)', 'Long');
             fs.writeFileSync(outTsPath, output);
             fs.unlinkSync(outTempPath);
         });
